@@ -10,12 +10,12 @@
 int main()
 {
     init();     // initialize
-    char c;
+    char c = 'y';
     do{
         startGame();
         cout << endl;
         cout << "Play again? [y/n] (default: y):   ";
-        cin.get(c);
+        cin >> c; cin.ignore();
     }while(c != 'n' || c != 'N');
 
     return 0;

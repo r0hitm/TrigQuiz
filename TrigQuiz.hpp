@@ -11,7 +11,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <iomanip>
-#include <cctype>
+#include <sstream>
 using namespace std;
 
 
@@ -48,20 +48,33 @@ inline  void init(){        // initialize
 static char getOpt(const int corr1, const int corr2)
 {
     string opt[4];
-    for(int i=0; i < 4; i++){           // First fill all options with wrong options
+    int    opt_i = 0;       // index into opt.
+    
+    // First fill all four options with multiple values
+    // then place the correct value at any random place.
+    while(opt_i < 4){
         int usrInput1 = rand() % 6, usrInput2 = rand() % 6;
         
         if ( usrInput1 != corr1 && usrInput2 != corr2)
-            opt[i] = values[usrInput1][usrInput2];
+        {
+            opt[opt_i] = values[usrInput1][usrInput2];
+            opt_i++;            // now to next option
+        }
     }
 
     // now placing correct option somewhere in the options
     char c = 'a' + rand() % 4;
-    opt[int(c-'a')] = values[corr1][corr1];
+    opt[int(c -'a')] = values[corr1][corr2];
+
+    #ifdef DEBUG
+        cout << "\n#DEBUG# (inside getOpt):  c = " << c << "\tint(c - 'a') = " << int(c - 'a') << endl;
+        cout << "\n#DEBUG# (inside getOpt):  value[corr1][corr2]  = " << values[corr1][corr2]
+             << "\t opt at c = " << opt[int(c - 'a')] << endl << endl;
+    #endif
 
     // Print it !
-    cout << "\t    a) " + opt[0] << setw(10) << right << "b) " + opt[1] << endl;
-    cout << "\t    c) " + opt[2] << setw(10) << right << "d) " + opt[3] << endl;
+    cout << setw(30) << left << "a) " + opt[0] << "b) " + opt[1] << endl;
+    cout << setw(30) << left <<  "c) " + opt[2]  << "d) " + opt[3] << endl;
     cout << endl;
 
     return c;
@@ -87,50 +100,75 @@ void startGame()
     {
         unsigned trig = rand() % 6; unsigned angle = rand() % 5;
 
-        string question = "\tQ." + char(i);
+        #ifdef DEBUG
+            cout << "\n#DEBUG# (inside startGame()) : trig = " << trig << "\t angle = " << angle << endl << endl;
+        #endif
+
+        // constructing the question in parts using stringstream.
+        stringstream question;
+        question << "Q." << i << " ";
+
         switch(trig)
         {
-            case 0: question += "  sin("; break;
-            case 1: question += "  cos("; break;
-            case 2: question += "  tan("; break;
-            case 3: question += "  csc("; break;
-            case 4: question += "  sec("; break;
-            case 5: question += "  cot("; break;
+            case 0: question << "  sin("; break;
+            case 1: question << "  cos("; break;
+            case 2: question << "  tan("; break;
+            case 3: question << "  csc("; break;
+            case 4: question << "  sec("; break;
+            case 5: question << "  cot("; break;
             
             default: cerr << "Error: Invalid Trig Function.\n";
                     exit(1);
         }
         switch(angle)
         {
-            case 0: question += "0"; break;
-            case 1: question += "30"; break;
-            case 2: question += "45"; break;
-            case 3: question += "60"; break;
-            case 4: question += "90"; break;
+            case 0: question << "0"; break;
+            case 1: question << "30"; break;
+            case 2: question << "45"; break;
+            case 3: question << "60"; break;
+            case 4: question << "90"; break;
 
             default: cerr << "Error: Invalid Angle.\n";
                     exit(2);
         }
-        question += "°) = ?\n";
+        question << "°) = ?\n";
 
-        cout << question << flush;
+        // get the question from the string stream and print it on screen
+        cout << question.str() << flush;
+
         char correct = getOpt(trig, angle);     // Print options and get the correct option label.
-        char  usrInput;
-        do{
+        
+        #ifdef DEBUG
+            cout << "\n#DEBUG# (inside startGame()) : correct(Line 124) = " << correct << endl << endl;
+        #endif
+
+        char  usrInput = '\0';
+        while(true)
+        {
             cout << "Your Answer: ";
-            cin.get(usrInput);          // get a single character.
-            if(cin.bad()){
-                cerr << "Error occured while reading your input.\nEnter valid input twit.\n";
-                cerr << "You Lose ! :(\n";
+
+            if(! cin.getline(&usrInput, 2) ) {  // QUESTION: Why i've to place 2 as second arg? meaning that \n will also be read. usrInput is a char type variable.
+                cerr << "Error occured while reading your Answer. *_*\n"
+                      << "Check your Input" << endl;
                 exit(3);
             }
-            if( isalpha(usrInput) )
-                tolower(usrInput);
+            cin.sync();     // sync the input stream,
+            cin.clear();    // and clear any error that may have occured.
+
+            #ifdef DEBUG
+                cout << "\n#DEBUG# (inside do-while): usrInput = " << usrInput << endl
+                     << "isalpha(usrInput) = " << boolalpha << isalpha(usrInput) << endl;
+            #endif
+
+            if( usrInput < 'a' || usrInput > 'd' )
+                cerr << "Input Error: What are you Typing man!\n";
             else
-                cerr << "Input Error: What are you Typing man!\n"
-                        "Enter a, b, c or d as per your correct option.\n";
+                break;
+            
+            #ifdef DEBUG
+                cout << "##After tolower(usrInput), usrInput = " << usrInput << endl << endl;
+            #endif
         }
-        while( usrInput != 'a' || usrInput != 'b' || usrInput != 'c' || usrInput != 'd');
 
         if(usrInput == correct){  // Usr is correct
             usrScore += 4;        // increase score.
@@ -145,7 +183,7 @@ void startGame()
         i++;
     }
     
-    cout << "\t\t* * * Game Over * * *";
+    cout << "\t\t* * * Game Over * * *\n";
     cout << "Your Score: " << usrScore << "/40\n";
 }
 #endif // _TRIG_QUIZ_
