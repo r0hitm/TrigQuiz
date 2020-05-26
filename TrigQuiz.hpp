@@ -25,27 +25,25 @@ const string    values[6][5] =      // Values of some trigonometric angles.
     { /* cot */    "undefined",     "√3",          "1",          "1/√3",     "0"}
 };
 
-const string banner =
-"*******************************************************\n"
-"**                     TRIG QUIZ                     **\n"
-"*******************************************************\n";
-
-const string rules = "\nI will ask you 10 questions regarding Trigonometry.\nTell me the value of"
-" the trigonometric value of the angles 0°, 30°, 45°, 60° and 90°.\n"
-"You will have four Multiple choices to choose from, "
-"for each correct answer 4 will be awarded and for each incorrect answer 1 is deducted.";
 
 inline  void init(){        // initialize
     srand( time(NULL) );
-    cout << banner << endl;
-    cout << rules << endl << endl;
+    cout << endl;
+    cout << "*******************************************************\n"
+            "**                     TRIG QUIZ                     **\n"
+            "*******************************************************\n\n";
 
-    cout << "\t* * * Game Starts * * *\n";
+    cout << "Game Rules: You will be asked about the values of some\n"
+            "----------  Trigonometric Functions at acute angle (at\n"
+            "            0°,30°,45°,60°,90°). You will have four \n"
+            "            options Choose any one.\n"
+            "            ♦ Correct answers worth +4 Points\n"
+            "            ♦ Incorrect answers worth -1 points\n\n";
 }
 // Constructs the options with correct option index(in values) passed as args
 // and, Prints them on the screen.
 // Returns: the correct option no. (a, b, c, or d)
-static char getOpt(const int corr1, const int corr2)
+static char getOpt(const int trig, const int angle)
 {
     string opt[4];
     int    opt_i = 0;       // index into opt.
@@ -53,22 +51,22 @@ static char getOpt(const int corr1, const int corr2)
     // First fill all four options with multiple values
     // then place the correct value at any random place.
     while(opt_i < 4){
-        int usrInput1 = rand() % 6, usrInput2 = rand() % 6;
+        int i = rand() % 6, j = rand() % 6;
         
-        if ( usrInput1 != corr1 && usrInput2 != corr2)
+        if ( i != trig && j != angle)
         {
-            opt[opt_i] = values[usrInput1][usrInput2];
+            opt[opt_i] = values[i][j];
             opt_i++;            // now to next option
         }
     }
 
     // now placing correct option somewhere in the options
     char c = 'a' + rand() % 4;
-    opt[int(c -'a')] = values[corr1][corr2];
+    opt[int(c -'a')] = values[trig][angle];
 
     #ifdef DEBUG
         cout << "\n#DEBUG# (inside getOpt):  c = " << c << "\tint(c - 'a') = " << int(c - 'a') << endl;
-        cout << "\n#DEBUG# (inside getOpt):  value[corr1][corr2]  = " << values[corr1][corr2]
+        cout << "\n#DEBUG# (inside getOpt):  value[trig][angle]  = " << values[trig][angle]
              << "\t opt at c = " << opt[int(c - 'a')] << endl << endl;
     #endif
 
@@ -84,7 +82,7 @@ static char getOpt(const int corr1, const int corr2)
 //Start the main game and never exit until the game ends//
 void startGame()
 {
-    cout << "Ready...? ";
+    cout << "Press Enter when Ready...";
     cin.get();
 
     int  usrScore = 0;
@@ -110,12 +108,12 @@ void startGame()
 
         switch(trig)
         {
-            case 0: question << "  sin("; break;
-            case 1: question << "  cos("; break;
-            case 2: question << "  tan("; break;
-            case 3: question << "  csc("; break;
-            case 4: question << "  sec("; break;
-            case 5: question << "  cot("; break;
+            case 0: question << "sin("; break;
+            case 1: question << "cos("; break;
+            case 2: question << "tan("; break;
+            case 3: question << "csc("; break;
+            case 4: question << "sec("; break;
+            case 5: question << "cot("; break;
             
             default: cerr << "Error: Invalid Trig Function.\n";
                     exit(1);
@@ -148,7 +146,7 @@ void startGame()
             cout << "Your Answer: ";
 
             if(! cin.getline(&usrInput, 2) ) {  // QUESTION: Why i've to place 2 as second arg? meaning that \n will also be read. usrInput is a char type variable.
-                cerr << "Error occured while reading your Answer. *_*\n"
+                cerr << "Error occured while reading your Answer. X_X\n"
                       << "Check your Input" << endl;
                 exit(3);
             }
@@ -160,10 +158,16 @@ void startGame()
                      << "isalpha(usrInput) = " << boolalpha << isalpha(usrInput) << endl;
             #endif
 
-            if( usrInput < 'a' || usrInput > 'd' )
-                cerr << "Input Error: What are you Typing man!\n";
-            else
-                break;
+            if(isalpha(usrInput)){              // valid input ---> a character
+                usrInput = tolower(usrInput);   // yes ---> into lowercase
+
+                if( usrInput < 'a' || usrInput > 'd' )
+                   cerr << "Input Error: What are you Typing man!\n";
+                else
+                    break;
+            }else{
+                cerr << "Invalid Input: Enter a, b, c or d.\n";
+            }
             
             #ifdef DEBUG
                 cout << "##After tolower(usrInput), usrInput = " << usrInput << endl << endl;
@@ -172,12 +176,18 @@ void startGame()
 
         if(usrInput == correct){  // Usr is correct
             usrScore += 4;        // increase score.
-            cout << "That was correct :)\n";
+            cout << "---------------------\n"
+                    "You are correct [+4] ^_^\n";
         }
         else{
             usrScore--;     // Usr is incorrect. Deduct score.
-            cout << "Too Bad :(\n";
+            cout << "-------------\n"
+                    "Too Bad. Wrong[-1] T_T\n";
         }
+
+        #ifdef SCR_DEBUG
+        cout << "Current User SCore: " << usrScore << endl;
+        #endif
 
         cout << endl << endl;
         i++;
