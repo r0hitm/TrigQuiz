@@ -45,34 +45,35 @@ inline  void init(){        // initialize
 // Returns: the correct option no. (a, b, c, or d)
 static char getOpt(const int trig, const int angle)
 {
-    string opt[4];
-    int    opt_i = 0;       // index into opt.
-    
+    string     opt[4];          // four options
+
+    // As the values of trig functions are repetitive in nature the following array is use to construct a options list
+    // that doesn't contain the repetitive choices
+    string    temp[11] = {"0", "1/2", "1/√2", "√3/2", "√3", "1/√3", "1", "undefined", "2/√3", "√2", "2"};
+    string    right              = values[trig][angle];      // get the right value
+
     // First fill all four options with multiple values
     // then place the correct value at any random place.
-    while(opt_i < 4){
-        int i = rand() % 6, j = rand() % 6;
-        
-        if ( i != trig && j != angle)
-        {
-            opt[opt_i] = values[i][j];
-            opt_i++;            // now to next option
+    for(int i = 0; i < 4; )
+    {
+        // get a index location into forwrongValues[]
+        // then remove this position so that it never repeats
+        int tmp = rand() % 11;
+
+        if( temp[tmp] != "" && temp[tmp] != right ){
+            opt[i] = temp[tmp];
+            temp[tmp] = "";
+            i++;
         }
     }
 
     // now placing correct option somewhere in the options
     char c = 'a' + rand() % 4;
-    opt[int(c -'a')] = values[trig][angle];
-
-    #ifdef DEBUG
-        cout << "\n#DEBUG# (inside getOpt):  c = " << c << "\tint(c - 'a') = " << int(c - 'a') << endl;
-        cout << "\n#DEBUG# (inside getOpt):  value[trig][angle]  = " << values[trig][angle]
-             << "\t opt at c = " << opt[int(c - 'a')] << endl << endl;
-    #endif
+    opt[int(c -'a')] = right;
 
     // Print it !
-    cout << setw(30) << left << "a) " + opt[0] << "b) " + opt[1] << endl;
-    cout << setw(30) << left <<  "c) " + opt[2]  << "d) " + opt[3] << endl;
+    cout << setw(30) << setfill(' ') << left << "a) " + opt[0] << "b) " + opt[1] << endl;
+    cout << setw(30) << setfill(' ') << left << "c) " + opt[2] << "d) " + opt[3] << endl;
     cout << endl;
 
     return c;
@@ -83,7 +84,7 @@ static char getOpt(const int trig, const int angle)
 void startGame()
 {
     cout << "Press Enter when Ready...";
-    cin.get();
+    cin.get(); cin.clear(); cin.sync();     // clear and sync the input stream
 
     int  usrScore = 0;
 
@@ -143,11 +144,11 @@ void startGame()
         char  usrInput = '\0';
         while(true)
         {
-            cout << "Your Answer: ";
+            cout << "♥ You Choose: ";
 
             if(! cin.getline(&usrInput, 2) ) {  // QUESTION: Why i've to place 2 as second arg? meaning that \n will also be read. usrInput is a char type variable.
-                cerr << "Error occured while reading your Answer. X_X\n"
-                      << "Check your Input" << endl;
+                cerr << "That is not a valid Option.\n"
+                      << "Check your Input...Well Never Mind. You are *disqualified*." << endl;
                 exit(3);
             }
             cin.sync();     // sync the input stream,
