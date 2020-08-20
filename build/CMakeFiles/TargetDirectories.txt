@@ -1,0 +1,3 @@
+C:/Users/rohit mehta/source/repos/TrigQuiz/build/CMakeFiles/TrigQuiz.dir
+C:/Users/rohit mehta/source/repos/TrigQuiz/build/CMakeFiles/edit_cache.dir
+C:/Users/rohit mehta/source/repos/TrigQuiz/build/CMakeFiles/rebuild_cache.dir
