@@ -11,7 +11,6 @@
 #include <ctime>
 #include <cstdlib>
 #include <iomanip>
-#include <sstream>
 using namespace std;
 
 
@@ -99,81 +98,75 @@ void startGame()
     {
         unsigned trig = rand() % 6; unsigned angle = rand() % 5;
 
-        #ifdef DEBUG
-            cout << "\n#DEBUG# (inside startGame()) : trig = " << trig << "\t angle = " << angle << endl << endl;
-        #endif
-
-        // constructing the question in parts using stringstream.
-        stringstream question;
-        question << "Q." << i << " ";
+        // Print the Question in-parts
+        cout << "Q." << i << " ";       // Question no. first
 
         switch(trig)
-        {
-            case 0: question << "sin("; break;
-            case 1: question << "cos("; break;
-            case 2: question << "tan("; break;
-            case 3: question << "csc("; break;
-            case 4: question << "sec("; break;
-            case 5: question << "cot("; break;
+        {           // then Trig Funcion
+            case 0: cout << "sin("; break;
+            case 1: cout << "cos("; break;
+            case 2: cout << "tan("; break;
+            case 3: cout << "csc("; break;
+            case 4: cout << "sec("; break;
+            case 5: cout << "cot("; break;
             
             default: cerr << "Error: Invalid Trig Function.\n";
                     exit(1);
         }
         switch(angle)
-        {
-            case 0: question << "0"; break;
-            case 1: question << "30"; break;
-            case 2: question << "45"; break;
-            case 3: question << "60"; break;
-            case 4: question << "90"; break;
+        {       /// and finally the angle(at which trig is to be evaluted)
+            case 0: cout << "0"; break;
+            case 1: cout << "30"; break;
+            case 2: cout << "45"; break;
+            case 3: cout << "60"; break;
+            case 4: cout << "90"; break;
 
             default: cerr << "Error: Invalid Angle.\n";
                     exit(2);
         }
-        question << "°) = ?\n";
+        cout << "°) = ?\n";
 
-        // get the question from the string stream and print it on screen
-        cout << question.str() << flush;
-
-        char correct = getOpt(trig, angle);     // Print options and get the correct option label.
-        
-        #ifdef DEBUG
-            cout << "\n#DEBUG# (inside startGame()) : correct(Line 124) = " << correct << endl << endl;
-        #endif
+        // Print options and get the correct option label.
+        char correct = getOpt(trig, angle);
 
         char  usrInput = '\0';
         while(true)
         {
             cout << "♥ You Choose: ";
 
-            if(! cin.getline(&usrInput, 2) ) {  // QUESTION: Why i've to place 2 as second arg? meaning that \n will also be read. usrInput is a char type variable.
+            /* if(! cin.getline(&usrInput, 2) ) {
+                // QUESTION: Why i've to place 2 as second arg? meaning that \n will also be read. usrInput is a char type variable.
+
+
                 cerr << "That is not a valid Option.\n"
                       << "Check your Input...Well Never Mind. You are *disqualified*." << endl;
                 exit(3);
-            }
+            } */
+            // is the above commented-out block is changing the value of correct.?
+            //---> cin.getline(&usrInput, 2); <-- yes, after this line the value of correct goes to 0 '\000'. But, why?
+
+            cin >> usrInput;
             cin.sync();     // sync the input stream,
             cin.clear();    // and clear any error that may have occured.
-
-            #ifdef DEBUG
-                cout << "\n#DEBUG# (inside do-while): usrInput = " << usrInput << endl
-                     << "isalpha(usrInput) = " << boolalpha << isalpha(usrInput) << endl;
-            #endif
 
             if(isalpha(usrInput)){              // valid input ---> a character
                 usrInput = tolower(usrInput);   // yes ---> into lowercase
 
+                if(usrInput == 'q')
+                    cout << "You are Quitting already?!\n",
+                    exit(EXIT_SUCCESS);
+
                 if( usrInput < 'a' || usrInput > 'd' )
                    cerr << "Input Error: What are you Typing man!\n";
+
                 else
                     break;
+
             }else{
                 cerr << "Invalid Input: Enter a, b, c or d.\n";
             }
-            
-            #ifdef DEBUG
-                cout << "##After tolower(usrInput), usrInput = " << usrInput << endl << endl;
-            #endif
         }
+
 
         if(usrInput == correct){  // Usr is correct
             usrScore += 4;        // increase score.
@@ -186,15 +179,12 @@ void startGame()
                     "Too Bad. Wrong[-1] T_T\n";
         }
 
-        #ifdef SCR_DEBUG
-        cout << "Current User SCore: " << usrScore << endl;
-        #endif
-
         cout << endl << endl;
         i++;
     }
     
     cout << "\t\t* * * Game Over * * *\n";
     cout << "Your Score: " << usrScore << "/40\n";
+    cout << "Accuracy:    " << fixed << setprecision(2) << float(usrScore * 100 / 40) << " %\n";
 }
 #endif // _TRIG_QUIZ_
