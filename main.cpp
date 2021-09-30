@@ -3,9 +3,11 @@
 //
 //Author: Rohit Mehta
 
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
 #include "TrigQuiz.hpp"
-// almost most of the needed headers file are included in this header
-// so i'll not re-include them.
 
 int main()
 {
