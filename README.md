@@ -2,25 +2,25 @@
 
 A Simple command line Trigonometry Multiple Choice Quiz Game.
 
-## How to Build
+## How to Build & Run
 
-On *nix systems using g++ compiler, or using cygwin on wsl on windows:
+On *nix systems using g++ compiler, or using Cygwin on WSL on Windows:
 
 ```sh
-$ g++ -Wall -o TrigQuiz TrigQuiz.cpp main.cpp
+g++ -Wall -o TrigQuiz TrigQuiz.cpp main.cpp
 ```
 
 To Run, now type on *nix terminal:
 
 ```sh
-$ ./TrigQuiz
+./TrigQuiz
 ```
 
-On windows, do this instead:
+To run on windows, do this instead:
 
 ```bat
-> chcp 65001
-> TrigQuiz
+chcp 65001
+TrigQuiz
 ```
 
-__Note__: On windows terminal some characters may not be displayed properly. To fix them run `chcp 65001` before running the game
+__Note__: `chcp 65001` is required to make sure all characters are rendered properly on windows terminal.
