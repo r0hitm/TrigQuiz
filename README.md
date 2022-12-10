@@ -2,6 +2,8 @@
 
 A Simple command line Trigonometry Multiple Choice Quiz Game.
 
+⚠ I made this as a fun exercise. Archiving it now ⚠
+
 ## How to Build & Run
 
 On *nix systems using g++ compiler, or using Cygwin on WSL on Windows:
